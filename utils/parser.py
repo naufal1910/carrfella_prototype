@@ -1,7 +1,14 @@
 import fitz  # PyMuPDF
+import requests
+from bs4 import BeautifulSoup
 
 
-class ResumePDFParseError(Exception):
+class ResumeJobDescParseError(Exception):
+    """Raised when a job description cannot be extracted or is too short."""
+    pass
+
+
+class ResumePDFParseError(ResumeJobDescParseError):
     """Raised when a PDF is corrupt or contains no extractable text."""
     pass
 
@@ -22,3 +29,21 @@ def extract_text_from_pdf(file):
         return text
     except Exception as e:
         raise ResumePDFParseError(f"Could not parse PDF: {e}")
+
+
+def extract_text_from_url(url):
+    try:
+        resp = requests.get(url, timeout=10)
+        resp.raise_for_status()
+        soup = BeautifulSoup(resp.text, "html.parser")
+        # Heuristic: get visible text, ignoring script/style
+        for tag in soup(["script", "style", "noscript"]):
+            tag.extract()
+        text = " ".join(soup.stripped_strings)
+        if not text or len(text) < 200:
+            raise ResumeJobDescParseError(
+                "Extracted job description is too short or empty."
+            )
+        return text
+    except Exception as e:
+        raise ResumeJobDescParseError(f"Could not extract job description from URL: {e}")
