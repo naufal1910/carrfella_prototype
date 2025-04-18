@@ -45,6 +45,7 @@ def main():
         "Select language",
         ("Indonesia", "English"),
         key="lang_select",
+        index=0  # Default to 'Indonesia'
     )
 
     # Analyse Button
@@ -109,15 +110,30 @@ def main():
 
             # --- Download PDF Button ---
             from utils.pdf_generator import generate_pdf
+            import re
+            from datetime import datetime
             pdf_bytes = generate_pdf(
                 results["job_matcher"],
                 results["cv_improver"],
                 results["cv_job_scorer"]
             )
+            # Try to extract candidate name from job_matcher result (first line or after 'Name:')
+            match_text = results["job_matcher"]
+            name = "career"
+            name_match = re.search(r"Name\s*[:：]\s*([\w\s'.-]+)", match_text, re.IGNORECASE)
+            if name_match:
+                name = name_match.group(1).strip().replace(" ", "_")
+            else:
+                # fallback: first word in first line if looks like a name
+                first_line = match_text.splitlines()[0].strip()
+                if len(first_line.split()) <= 5 and all(c.isalpha() or c in " .-'" for c in first_line):
+                    name = first_line.replace(" ", "_")
+            nowstr = datetime.now().strftime("%y%m%d%H%M%S")
+            file_name = f"{nowstr}_{name}_report.pdf"
             st.download_button(
                 label="Download PDF Report",
                 data=pdf_bytes,
-                file_name="career_report.pdf",
+                file_name=file_name,
                 mime="application/pdf",
                 disabled=(len(pdf_bytes) < 5120)
             )
