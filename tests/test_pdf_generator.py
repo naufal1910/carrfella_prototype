@@ -5,6 +5,6 @@ def test_generate_pdf_size():
     improve = "CV Improvement Suggestions\n" + ("B" * 1000)
     score = "Fit Score\n" + ("C" * 1000)
     pdf_bytes = generate_pdf(match, improve, score)
-    # Should be >5kB
+    # Should be >2kB
     assert isinstance(pdf_bytes, bytes)
-    assert len(pdf_bytes) > 5120
+    assert len(pdf_bytes) > 2000

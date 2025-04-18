@@ -1,6 +1,6 @@
 import os
 from dotenv import load_dotenv
-from langchain.chat_models import ChatOpenAI
+from langchain_community.chat_models import ChatOpenAI
 from langchain.schema import HumanMessage
 
 load_dotenv()
@@ -44,6 +44,8 @@ def job_matcher_func(inputs):
         response = llm.invoke([HumanMessage(content=_prompt)])
         return response.content
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return f"[ERROR] {e}"
 
 def cv_improver_func(inputs):
@@ -74,6 +76,8 @@ def cv_improver_func(inputs):
         response = llm.invoke([HumanMessage(content=_prompt)])
         return response.content
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return f"[ERROR] {e}"
 
 def cv_job_scorer_func(inputs):
@@ -104,6 +108,8 @@ def cv_job_scorer_func(inputs):
         response = llm.invoke([HumanMessage(content=_prompt)])
         return response.content
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         return f"[ERROR] {e}"
 
 def job_matcher(resume_text, jobdesc_text, lang):

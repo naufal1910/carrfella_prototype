@@ -6,6 +6,7 @@ beautifulsoup4
 requests
 python-dotenv
 fpdf
+langchain-community
 
 # --- Testing dependencies ---
 pytest

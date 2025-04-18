@@ -1,11 +1,11 @@
 import streamlit as st
 
 def main():
-    st.set_page_config(page_title="Career Agent Advisor")
-    st.title("Career Agent Advisor")
+    st.set_page_config(page_title="CARRFELLA")
+    st.title("CARRFELLA - Career Advisor Assistant")
 
-    # Résumé PDF uploader
-    st.header("1. Résumé PDF Upload")
+    # Resume PDF uploader
+    st.header("1. Resume PDF Upload")
     resume_pdf_val = st.file_uploader(
         "Upload your résumé (PDF only)",
         type=["pdf"],
@@ -51,6 +51,8 @@ def main():
     # Analyse Button
     st.header("4. Analyse")
     if st.button("Analyse", key="analyse_btn"):
+        st.markdown("Analyse clicked")
+        # UI log appears before any logic or imports
         import time
         from utils.parser import extract_text_from_url, extract_text_from_pdf, ResumeJobDescParseError, ResumePDFParseError
         from utils.langchain_tools import job_matcher, cv_improver, cv_job_scorer
@@ -138,9 +140,13 @@ def main():
                 disabled=(len(pdf_bytes) < 5120)
             )
         except (ResumeJobDescParseError, ResumePDFParseError) as e:
+            import traceback
             st.error(str(e))
+            traceback.print_exc()
         except Exception as e:
+            import traceback
             st.error(f"Unexpected error: {e}")
+            traceback.print_exc()
 
 
 if __name__ == "__main__":
