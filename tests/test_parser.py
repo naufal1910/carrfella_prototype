@@ -21,6 +21,8 @@ def test_extract_text_from_empty_pdf():
         extract_text_from_pdf(empty_pdf)
 
 
+import io
+
 def test_extract_text_from_corrupt_pdf():
     # Simulate corrupt PDF with random bytes
     corrupt_bytes = io.BytesIO(b"this is not a pdf")
