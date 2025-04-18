@@ -22,7 +22,7 @@ source .venv/bin/activate  # macOS/Linux
 .\.venv\Scripts\activate  # Windows
 
 # 3. Install dependencies
-pip install -r requirements.txt pytest flake8 black pytest-cov streamlit-testing
+pip install -r requirements.txt
 
 # 4. Create your .env
 echo "OPENAI_API_KEY=your_openai_api_key_here" > .env
@@ -44,7 +44,6 @@ streamlit run app.py
 - **Streamlit** for UI
 - **LangChain & OpenAI** (GPT‑4o‑mini) for AI logic
 - **PyMuPDF** & **BeautifulSoup** for parsing
-- **FAISS‑cpu** for in‑memory vector caching
 - **FPDF** for PDF generation
 
 ## 🐳 Docker
@@ -52,7 +51,10 @@ streamlit run app.py
 Build and run in Docker:
 
 ```bash
+# Build image
 docker build -t carrfella .
+
+# Run container (serves at http://localhost:8501)
 docker run -p 8501:8501 carrfella
 ```
 
