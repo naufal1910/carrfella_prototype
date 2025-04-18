@@ -2,7 +2,6 @@ import fitz  # PyMuPDF
 import requests
 from bs4 import BeautifulSoup
 
-
 class ResumeJobDescParseError(Exception):
     """Raised when a job description cannot be extracted or is too short."""
     pass
