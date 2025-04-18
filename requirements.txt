@@ -1,0 +1,14 @@
+streamlit
+langchain
+openai
+faiss-cpu
+PyMuPDF
+sentence-transformers
+beautifulsoup4
+requests
+python-dotenv
+pip
+langchain-community
+fpdf
+newspaper3k
+lxml_html_clean
