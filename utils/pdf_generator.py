@@ -1,5 +1,4 @@
 from fpdf import FPDF
-from io import BytesIO
 
 def generate_pdf(match, improve, score):
     pdf = FPDF()
@@ -23,5 +22,5 @@ def generate_pdf(match, improve, score):
     pdf.set_font("Arial", "", 12)
     pdf.multi_cell(0, 10, score)
     # Output as bytes
-    pdf_bytes = pdf.output(dest="S").encode("latin1")
+    pdf_bytes = pdf.output(dest="S").encode("utf-8")
     return pdf_bytes
