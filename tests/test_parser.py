@@ -1,7 +1,8 @@
 import io
 import os
 import pytest
-from utils.parser import extract_text_from_pdf, ResumePDFParseError
+from unittest import mock
+from utils.parser import extract_text_from_pdf, extract_text_from_url, ResumePDFParseError, ResumeJobDescParseError
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "resumes")
 

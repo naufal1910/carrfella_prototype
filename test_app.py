@@ -13,10 +13,13 @@ def test_app_smoke():
     assert "3. Language Selector" in headers
     assert "4. Analyse" in headers
     # Check Analyse button exists
-    assert at.button["analyse_btn"].label == "Analyse"
+    assert any(btn.label == "Analyse" for btn in at.button)
     # Click Analyse and check for log
-    at.button["analyse_btn"].click()
+    at.button[0].click()
+    print("TEXT OUTPUT:", [t.value for t in at.text])
+    print("MARKDOWN OUTPUT:", [m.value for m in at.markdown])
+    all_outputs = list(getattr(at, "text", [])) + list(getattr(at, "markdown", []))
     assert any(
         "Analyse clicked" in m.value
-        for m in at.markdown + at.text + at.write
+        for m in all_outputs
     )
