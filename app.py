@@ -6,7 +6,7 @@ def main():
 
     # Résumé PDF uploader
     st.header("1. Résumé PDF Upload")
-    st.file_uploader(
+    resume_pdf_val = st.file_uploader(
         "Upload your résumé (PDF only)",
         type=["pdf"],
         key="resume_pdf",
@@ -41,7 +41,7 @@ def main():
 
     # Language Selector
     st.header("3. Language Selector")
-    st.selectbox(
+    lang_val = st.selectbox(
         "Select language",
         ("Indonesia", "English"),
         key="lang_select",
@@ -50,11 +50,13 @@ def main():
     # Analyse Button
     st.header("4. Analyse")
     if st.button("Analyse", key="analyse_btn"):
-        # --- JOB DESCRIPTION EXTRACTION LOGIC ---
+        import time
         from utils.parser import extract_text_from_url, extract_text_from_pdf, ResumeJobDescParseError, ResumePDFParseError
+        from utils.langchain_tools import job_matcher, cv_improver, cv_job_scorer
         job_desc_text = None
-        error_msg = None
+        resume_text = None
         try:
+            # --- JOB DESCRIPTION EXTRACTION ---
             if job_input_mode == "Paste Text":
                 if not job_text_val or len(job_text_val.strip()) < 200:
                     raise ResumeJobDescParseError("Please paste at least 200 characters of job description text.")
@@ -69,14 +71,38 @@ def main():
                 job_desc_text = extract_text_from_pdf(job_pdf_val)
                 if not job_desc_text or len(job_desc_text.strip()) < 200:
                     raise ResumeJobDescParseError("Extracted job description from PDF is too short.")
-            # If we get here, job_desc_text is valid
-            st.success("Job description extracted successfully!")
-            st.write(job_desc_text)
+
+            # --- RÉSUMÉ EXTRACTION ---
+            if not resume_pdf_val:
+                raise ResumePDFParseError("Please upload a résumé PDF file.")
+            resume_text = extract_text_from_pdf(resume_pdf_val)
+            if not resume_text or len(resume_text.strip()) < 200:
+                raise ResumePDFParseError("Extracted résumé text is too short.")
+
+            # --- LANGCHAIN TOOLS SEQUENTIAL CALLS ---
+            st.info("Invoking analysis tools...")
+            results = {}
+            timings = {}
+            for tool_name, tool_fn in [
+                ("job_matcher", job_matcher),
+                ("cv_improver", cv_improver),
+                ("cv_job_scorer", cv_job_scorer),
+            ]:
+                start = time.perf_counter()
+                result = tool_fn(resume_text, job_desc_text, lang_val)
+                duration = time.perf_counter() - start
+                print(f"[{tool_name}] took {duration:.2f}s")
+                results[tool_name] = result
+                timings[tool_name] = duration
+            st.success("Analysis complete!")
+            for tool_name in results:
+                st.subheader(tool_name)
+                st.write(results[tool_name])
+                st.caption(f"Time: {timings[tool_name]:.2f}s")
         except (ResumeJobDescParseError, ResumePDFParseError) as e:
             st.error(str(e))
         except Exception as e:
             st.error(f"Unexpected error: {e}")
-  # Stub callback
 
 
 if __name__ == "__main__":
