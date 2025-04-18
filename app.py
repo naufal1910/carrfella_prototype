@@ -95,10 +95,17 @@ def main():
                 results[tool_name] = result
                 timings[tool_name] = duration
             st.success("Analysis complete!")
-            for tool_name in results:
-                st.subheader(tool_name)
-                st.write(results[tool_name])
-                st.caption(f"Time: {timings[tool_name]:.2f}s")
+            # Chat bubbles for each result
+            chat_labels = [
+                ("Match Analysis", results["job_matcher"], timings["job_matcher"]),
+                ("CV Improvement Suggestions", results["cv_improver"], timings["cv_improver"]),
+                ("Fit Score", results["cv_job_scorer"], timings["cv_job_scorer"]),
+            ]
+            for label, content, timing in chat_labels:
+                with st.chat_message("assistant"):
+                    st.markdown(f"**{label}:**")
+                    st.write(content)
+                    st.caption(f"Time: {timing:.2f}s")
         except (ResumeJobDescParseError, ResumePDFParseError) as e:
             st.error(str(e))
         except Exception as e:
