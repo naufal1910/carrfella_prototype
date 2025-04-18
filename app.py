@@ -106,6 +106,21 @@ def main():
                     st.markdown(f"**{label}:**")
                     st.write(content)
                     st.caption(f"Time: {timing:.2f}s")
+
+            # --- Download PDF Button ---
+            from utils.pdf_generator import generate_pdf
+            pdf_bytes = generate_pdf(
+                results["job_matcher"],
+                results["cv_improver"],
+                results["cv_job_scorer"]
+            )
+            st.download_button(
+                label="Download PDF Report",
+                data=pdf_bytes,
+                file_name="career_report.pdf",
+                mime="application/pdf",
+                disabled=(len(pdf_bytes) < 5120)
+            )
         except (ResumeJobDescParseError, ResumePDFParseError) as e:
             st.error(str(e))
         except Exception as e:
