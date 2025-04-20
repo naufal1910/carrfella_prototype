@@ -1,4 +1,4 @@
-from utils.pdf_generator import generate_pdf
+from src.utils.pdf_generator import generate_pdf
 
 def test_generate_pdf_size():
     match = "Match Analysis\n" + ("A" * 1000)

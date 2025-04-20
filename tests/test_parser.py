@@ -1,6 +1,6 @@
 import os
 import pytest
-from utils.parser import extract_text_from_pdf, ResumePDFParseError
+from src.utils.parser import extract_text_from_pdf, ResumePDFParseError
 
 DATA_DIR = os.path.join(os.path.dirname(__file__), "..", "data", "resumes")
 

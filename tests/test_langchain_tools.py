@@ -1,5 +1,5 @@
 import pytest
-from utils import langchain_tools
+from src.utils import langchain_tools
 
 def test_job_matcher_language():
     # Indonesia
