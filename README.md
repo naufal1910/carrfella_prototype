@@ -1,6 +1,6 @@
 # Carrfella Prototype
 
-Carrfella Prototype is a lightweight Streamlit application that helps job‑seekers instantly evaluate and enhance their résumé for any job description.\
+Carrfella Prototype is a lightweight Streamlit application that helps job‑seekers instantly evaluate and enhance their resume for any job description.\
 Upload your CV (PDF) and drop in a job post (text, URL or PDF), and our LangChain‑powered agent (GPT‑4o‑mini) will return:
 
 1. A detailed **match analysis**
@@ -8,6 +8,55 @@ Upload your CV (PDF) and drop in a job post (text, URL or PDF), and our LangChai
 3. A clear **fit score**
 
 Finally, download a polished PDF report you can share with recruiters or mentors—all within 30 seconds.
+
+---
+
+## 📊 Program Flow
+
+```mermaid
+flowchart TD
+    Start(["User Opens App"])
+    UploadResume["User uploads Resume PDF"]
+    JobDescInput["User provides Job Description (Paste, URL, or PDF)"]
+    LangSelect["User selects Language"]
+    AnalyseBtn["User clicks Analyse"]
+    ExtractResume["Extract Resume Text"]
+    ExtractJobDesc["Extract Job Desc Text"]
+    ValidateContent["Validate Resume/JobDesc Keywords"]
+    ErrorCheck["Show Error/Warning if Invalid"]
+    LLMTools["Run LLM Analysis (job_matcher, cv_improver, cv_job_scorer)"]
+    Results["Show Results + Download PDF"]
+    End(["Done"])
+
+    Start --> UploadResume
+    UploadResume --> JobDescInput
+    JobDescInput --> LangSelect
+    LangSelect --> AnalyseBtn
+    AnalyseBtn --> ExtractResume
+    AnalyseBtn --> ExtractJobDesc
+    ExtractResume --> ValidateContent
+    ExtractJobDesc --> ValidateContent
+    ValidateContent -- Invalid --> ErrorCheck
+    ValidateContent -- Valid --> LLMTools
+    LLMTools --> Results
+    ErrorCheck --> End
+    Results --> End
+```
+
+---
+
+## 🌟 Features
+- Accepts resume and job description as PDF, text, or URL
+- Supports Bahasa Indonesia and English
+- Validates input content for relevance
+- Generates a downloadable, combined PDF report
+
+## ⚠️ Limitations
+- Only PDF files are supported for upload
+- LLM output may vary and is not deterministic
+- No strict enforcement of resume/job description format
+
+---
 
 ## 🚀 Pre‑flight Setup
 
@@ -33,7 +82,7 @@ streamlit run app.py
 
 ## 📄 Usage
 
-1. **Upload** your résumé PDF.
+1. **Upload** your resume PDF.
 2. **Provide** job description via Text, URL, or PDF.
 3. **Select** language (Bahasa Indonesia / English).
 4. **Click** Analyze to generate insights.

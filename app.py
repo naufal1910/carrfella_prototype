@@ -7,7 +7,7 @@ def main():
     # Resume PDF uploader
     st.header("1. Resume PDF Upload")
     resume_pdf_val = st.file_uploader(
-        "Upload your résumé (PDF only)",
+        "Upload your resume (PDF only)",
         type=["pdf"],
         key="resume_pdf",
     )
@@ -51,11 +51,10 @@ def main():
     # Analyse Button
     st.header("4. Analyse")
     if st.button("Analyse", key="analyse_btn"):
-        st.markdown("Analyse clicked")
         # UI log appears before any logic or imports
         import time
-        from utils.parser import extract_text_from_url, extract_text_from_pdf, ResumeJobDescParseError, ResumePDFParseError
-        from utils.langchain_tools import job_matcher, cv_improver, cv_job_scorer
+        from src.utils.parser import extract_text_from_url, extract_text_from_pdf, ResumeJobDescParseError, ResumePDFParseError
+        from src.utils.langchain_tools import job_matcher, cv_improver, cv_job_scorer
         job_desc_text = None
         resume_text = None
         try:
@@ -75,12 +74,29 @@ def main():
                 if not job_desc_text or len(job_desc_text.strip()) < 200:
                     raise ResumeJobDescParseError("Extracted job description from PDF is too short.")
 
-            # --- RÉSUMÉ EXTRACTION ---
+            # --- RESUME EXTRACTION ---
             if not resume_pdf_val:
-                raise ResumePDFParseError("Please upload a résumé PDF file.")
+                raise ResumePDFParseError("Please upload a resume PDF file.")
             resume_text = extract_text_from_pdf(resume_pdf_val)
             if not resume_text or len(resume_text.strip()) < 200:
-                raise ResumePDFParseError("Extracted résumé text is too short.")
+                raise ResumePDFParseError("Extracted resume text is too short.")
+
+            # --- SIMPLE CONTENT VALIDATION ---
+            def has_resume_keywords(text):
+                keywords = [
+                    'experience', 'education', 'responsibilities', 'skills',
+                    'job', 'position', 'company', 'profile', 'summary', 'objective',
+                    'work', 'employment', 'contact', 'email', 'phone'
+                ]
+                text_lower = text.lower()
+                return sum(kw in text_lower for kw in keywords) >= 2
+
+            if not has_resume_keywords(resume_text):
+                st.warning("The uploaded resume does not appear to be a valid resume. Please check your file.")
+                return
+            if not has_resume_keywords(job_desc_text):
+                st.warning("The provided job description does not appear to be valid. Please check your input.")
+                return
 
             # --- LANGCHAIN TOOLS SEQUENTIAL CALLS ---
             st.info("Invoking analysis tools...")
@@ -111,7 +127,7 @@ def main():
                     st.caption(f"Time: {timing:.2f}s")
 
             # --- Download PDF Button ---
-            from utils.pdf_generator import generate_pdf
+            from src.utils.pdf_generator import generate_pdf
             import re
             from datetime import datetime
             pdf_bytes = generate_pdf(
